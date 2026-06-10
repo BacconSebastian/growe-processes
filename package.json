@@ -4,7 +4,8 @@
   "description": "Scheduler HTTP delgado que dispara los cron jobs de Growe vía POST al backend.",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node run-due-jobs.js",
+    "daemon": "node index.js"
   },
   "engines": {
     "node": ">=18"

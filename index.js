@@ -8,6 +8,7 @@ const { triggerJob } = require('./trigger');
 
 /**
  * Registra todos los jobs definidos en jobs.js con node-cron.
+ * Usa los campos `schedule` y `timezone` de la tabla declarativa de jobs.js.
  * Cada disparo llama a triggerJob(name), que nunca lanza — los fallos
  * son logueados internamente y no tumban el proceso.
  */
@@ -40,7 +41,7 @@ process.on('SIGINT', () => shutdown('SIGINT'));
 
 registerJobs();
 
-console.log('[Scheduler] Iniciado. Jobs registrados:');
+console.log('[Scheduler] Daemon iniciado. Jobs registrados:');
 for (const job of JOBS) {
   const tz = job.timezone ? ` [${job.timezone}]` : ' [hora del servidor]';
   console.log(`  - ${job.name}  |  ${job.schedule}${tz}`);
