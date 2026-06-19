@@ -39,6 +39,12 @@ const JOBS = [
     // sin timezone — hora del proceso
   },
   {
+    name: 'coach-session-reminder',
+    when: { type: 'utc-minute', minute: 0 },
+    schedule: '0 * * * *',
+    // sin timezone — hora del proceso
+  },
+  {
     name: 'premium-expiration',
     when: { type: 'ar-time', hour: 0, minute: 0 },
     schedule: '5 0 * * *',
