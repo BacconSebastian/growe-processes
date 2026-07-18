@@ -158,23 +158,24 @@ a todas las peticiones de jobs.
 
 ---
 
-## Secuencia de cutover (migración desde cron in-process)
+## Cutover desde cron in-process (completado)
 
-Los cron jobs actualmente corren dentro del proceso del backend (via `node-cron`
-in-process en `src/cron/index.js`). Para migrar al scheduler externo sin downtime:
+El scheduling in-process del backend (`node-cron` en `src/cron/index.js`) fue
+**eliminado**. Este scheduler externo es hoy el **único** disparador de los 7
+jobs — no existe modo dual ni rollback a in-process, y la env var
+`ENABLE_CRON_JOBS` ya no existe en el backend (no la lee ningún código).
+
+El flujo vigente para desplegar o verificar el endpoint interno tras un deploy
+del backend:
 
 1. **Deploy del backend con el endpoint interno:** asegurarse de que el backend
    tenga implementado `POST /api/internal/jobs/:jobName` y la variable
-   `INTERNAL_JOBS_SECRET` configurada en Railway.
+   `INTERNAL_JOBS_SECRET` configurada en Railway (es el único requisito — no
+   hay otra variable de cron que configurar en el backend).
 
-2. **Deploy del scheduler externo:** deployar este servicio con `API_BASE_URL`
-   apuntando al backend y `INTERNAL_JOBS_SECRET` con el mismo valor. En este
-   punto ambos sistemas conviven — los jobs se ejecutan dos veces por disparo.
-   Verificar en los logs del scheduler que los POSTs devuelven `200`.
+2. **Smoke test:** `curl -X POST <API_BASE_URL>/api/internal/jobs/draft-cleanup -H "X-Internal-Job-Secret: <secret>"`
+   y verificar `200`.
 
-3. **Deshabilitar los cron in-process:** en el backend de Railway, setear la
-   variable de entorno `ENABLE_CRON_JOBS=false` y reiniciar el servicio. A partir
-   de ese momento solo el scheduler externo dispara los jobs.
-
-4. **Rollback (si es necesario):** volver a `ENABLE_CRON_JOBS=true` en el backend
-   y detener/eliminar el scheduler externo. Los jobs vuelven a correr in-process.
+3. **Deploy de este scheduler:** con `API_BASE_URL` apuntando al backend y
+   `INTERNAL_JOBS_SECRET` con el mismo valor. Verificar en los logs que los
+   POSTs devuelven `200`.
