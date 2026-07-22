@@ -23,6 +23,7 @@
  *   - planning-scheduled-promotion: 00:15 AR daemon → 00:00 AR dispatcher (ídem)
  *   - exercise-media-cleanup:      03:00 AR → ar-time 3:0
  *   - draft-cleanup:               03:30 AR → ar-time 3:30
+ *   - coach-payment-reminder:      10:00 AR → ar-time 10:0
  */
 
 const JOBS = [
@@ -66,6 +67,12 @@ const JOBS = [
     name: 'draft-cleanup',
     when: { type: 'ar-time', hour: 3, minute: 30 },
     schedule: '30 3 * * *',
+    timezone: 'America/Argentina/Buenos_Aires',
+  },
+  {
+    name: 'coach-payment-reminder',
+    when: { type: 'ar-time', hour: 10, minute: 0 },
+    schedule: '0 10 * * *',
     timezone: 'America/Argentina/Buenos_Aires',
   },
 ];
